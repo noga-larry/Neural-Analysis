@@ -12,7 +12,7 @@ function [psth] = raster2psth(raster,params)
 %                       to avoid edge artifacts. 
 
 psth = nanmean(raster',1);
-win = normpdf(-3*SD:3*SD,0,SD);
+win = normpdf(-3*params.SD:3*params.SD,0,params.SD);
 win = win/sum(win);
 psth = filtfilt(win,1,psth);
 psth = psth*1000;
