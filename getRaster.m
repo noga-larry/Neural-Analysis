@@ -19,10 +19,11 @@ function raster = getRaster( data, ind, raster_params )
 % Note: Alligning to 'all' wll return the raster of the entire trial. If
 % ind contains more thrn one trial and trials have different lengths this
 % may cause a problem. 
+extended_time_after_trial = 5001;
+display_time = raster_params.time_before + raster_params.time_after+1;
 
 switch raster_params.allign_to
         case 'cue'
-            display_time = raster_params.time_before + raster_params.time_after+1;
 
             raster = zeros (display_time+2*raster_params.smoothing_margins,length(ind));
 
@@ -39,7 +40,6 @@ switch raster_params.allign_to
             end
 
         case 'targetMovementOnset'
-            display_time = raster_params.time_before + raster_params.time_after+1;
 
             raster = zeros (display_time+2*raster_params.smoothing_margins,length(ind));
 
@@ -60,21 +60,15 @@ switch raster_params.allign_to
             raster = zeros (display_time+2*raster_params.smoothing_margins,length(ind));
 
            for f = 1:length(ind)
-               if ~ isnan(data.trials(ind(f)).rwd_time)
-                    ts = data.trials(ind(f)).rwd_time +(-(raster_params.time_before+raster_params.smoothing_margins):...
+               if ~ isnan(data.trials(ind(f)).rwd_time_in_extended)
+                    ts = data.trials(ind(f)).rwd_time_in_extended +(-(raster_params.time_before+raster_params.smoothing_margins):...
                     (raster_params.time_after+raster_params.smoothing_margins));
                     ind_spk = ceil(data.trials(ind(f)).extended_spike_times);
                     ind_spk(ind_spk==0) = 1; % if spike is at time 0, move to 1.
-                    
-                    if length(data.trials(ind(f)).extended_hVel)<max(ts) 
-                        % the case of very short trial
-                         raster (:,f) = nan(length(ts),1);
-                    else    
-                        raster_t = zeros (length(data.trials(ind(f)).extended_hVel),1);
-                        raster_t(ind_spk) = 1;
-                        raster_t = raster_t (ts);
-                        raster (:,f) = raster_t;
-                    end
+                    raster_t = zeros (data.trials(ind(f)).rwd_time_in_extended+extended_time_after_trial,1);
+                    raster_t(ind_spk) = 1;
+                    raster_t = raster_t (ts);
+                    raster (:,f) = raster_t;
                else
                    raster (:,f) = nan(length(-(raster_params.time_before+raster_params.smoothing_margins):...
                     (raster_params.time_after+raster_params.smoothing_margins)),1);
