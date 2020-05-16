@@ -22,7 +22,7 @@ function raster = getRaster( data, ind, raster_params )
 extended_time_after_trial = 5001;
 display_time = raster_params.time_before + raster_params.time_after+1;
 
-switch raster_params.allign_to
+switch raster_params.align_to
     case 'cue'
         
         raster = zeros (display_time+2*raster_params.smoothing_margins,length(ind));

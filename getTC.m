@@ -17,7 +17,7 @@ function [TC,p,h] = getTC(data,  directions, ind, comparison_window)
 raster_params.time_before = -min(comparison_window);
 raster_params.time_after = max(comparison_window);
 raster_params.smoothing_margins = 0;
-raster_params.allign_to = 'targetMovementOnset';
+raster_params.align_to = 'targetMovementOnset';
 
 % get direcions
 

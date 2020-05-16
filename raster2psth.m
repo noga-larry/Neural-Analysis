@@ -1,4 +1,4 @@
-function [psth] = raster2psth(raster,params)
+function[psth] = raster2psth(raster,params) 
 
 % This function takes rasters and trasforms them in to smoothed psths. 
 % Input:    raster      A matrix whos first dimnsion is time and second
