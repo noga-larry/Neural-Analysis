@@ -21,7 +21,7 @@ raster_params.align_to = 'targetMovementOnset';
 
 % get direcions
 
-[~,match_d] = getDirections(data);
+[~,match_d] = getDirections(data,ind);
 
 % indices of failsed trials
 fail_bool = [data.trials.fail];
