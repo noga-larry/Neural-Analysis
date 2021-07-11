@@ -19,7 +19,7 @@ function raster = getRaster( data, ind, raster_params )
 % Note: Alligning to 'all' wll return the raster of the entire trial. If
 % ind contains more thrn one trial and trials have different lengths this
 % may cause a problem.
-extended_time_after_trial = 5001;
+EXTENDED_TIME_AFTER_TRIAL = 5001;
 display_time = raster_params.time_before + raster_params.time_after+1;
 
 switch raster_params.align_to
