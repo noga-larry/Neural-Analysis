@@ -20,3 +20,6 @@ if (sum(sum(raster)))>0
     ylim ([0, size(raster,2)])
 end
 
+xlabel(['Time from ' raster_params.align_to ' (ms)'])
+
+
