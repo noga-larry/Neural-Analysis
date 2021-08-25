@@ -1,4 +1,5 @@
-function [TC,p,h] = getTC(data,  directions, ind, comparison_window)
+function [TC,p,h] = getTC(data, directions, ind, comparison_window, ...
+    varargin)
 
 % This function finds the preferred directio of a cell using center of mass
 % and checks its significance using either ranksum test (only 2 directions)
@@ -13,11 +14,15 @@ function [TC,p,h] = getTC(data,  directions, ind, comparison_window)
 %           .iclude_failed     1: include failed trials, 0: don't 
 %           .TC_window         Time window relative to movement onset to 
 
+p = inputParser;
+defaultAlignTo= 'targetMovementOnset';
+addOptional(p,'alignTo',defaultAlignTo);
 
+parse(p,varargin{:})
+raster_params.align_to = p.Results.alignTo;
 raster_params.time_before = -min(comparison_window);
 raster_params.time_after = max(comparison_window);
 raster_params.smoothing_margins = 0;
-raster_params.align_to = 'targetMovementOnset';
 
 % get direcions
 
