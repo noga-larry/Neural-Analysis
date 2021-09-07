@@ -82,6 +82,17 @@ switch raster_params.align_to
             raster_t(ind_spk) = 1;
             raster (:,f) = raster_t;
         end
+        case 'allExtended'
+            for f = 1:length(ind)
+                ind_spk = ceil(data.trials(ind(f)).extended_spike_times);
+                ind_spk(ind_spk==0) = 1; % if spike is at time 0, move to 1.
+                raster_t = zeros (data.trials(ind(f)).trial_length...
+                    +EXTENDED_TIME_AFTER_TRIAL+...
+                    data.trials(ind(f)).extended_trial_begin,1);
+                raster_t(ind_spk) = 1;
+                raster (:,f) = raster_t;
+            end
+        
  end
 
 
