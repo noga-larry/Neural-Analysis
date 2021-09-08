@@ -21,80 +21,57 @@ function raster = getRaster(data, ind, raster_params)
 % may cause a problem.
 EXTENDED_TIME_AFTER_TRIAL = 5001;
 
-switch raster_params.align_to
-    case 'cue'
-        display_time = raster_params.time_before + raster_params.time_after+1;
-        raster = zeros (display_time+2*raster_params.smoothing_margins,length(ind));
+window = -(raster_params.time_before+raster_params.smoothing_margins):...
+    (raster_params.time_after+raster_params.smoothing_margins);
+display_time = raster_params.time_before + raster_params.time_after+1;
+raster = zeros (display_time+2*raster_params.smoothing_margins,length(ind));
+for f = 1:length(ind)
+    
+    switch raster_params.align_to
         
-        for f = 1:length(ind)
-            ts = data.trials(ind(f)).cue_onset +(-(raster_params.time_before+raster_params.smoothing_margins):...
-                (raster_params.time_after+raster_params.smoothing_margins));
-            ind_spk = ceil(data.trials(ind(f)).spike_times);
-            ind_spk(ind_spk==0) = 1; % if spike is at time 0, move to 1.
-            raster_t = zeros (data.trials(ind(f)).trial_length,1);
-            raster_t(ind_spk) = 1;
-            raster_t = raster_t (ts);
-            raster (:,f) = raster_t;
-        end
-        
-    case 'targetMovementOnset'
-      
-        display_time = raster_params.time_before + raster_params.time_after+1;
-        raster = zeros (display_time+2*raster_params.smoothing_margins,length(ind));
-        
-        for f = 1:length(ind)
-            ts = data.trials(ind(f)).movement_onset +(-(raster_params.time_before+raster_params.smoothing_margins):...
-                (raster_params.time_after+raster_params.smoothing_margins));
-            ind_spk = ceil(data.trials(ind(f)).spike_times);
-            ind_spk(ind_spk==0) = 1; % if spike is at time 0, move to 1.
-            raster_t = zeros (data.trials(ind(f)).trial_length,1);
-            raster_t(ind_spk) = 1;
-            raster_t = raster_t (ts);
-            raster (:,f) = raster_t;
-        end
-        
-    case 'reward'
-        display_time = raster_params.time_before + raster_params.time_after+1;
-        raster = zeros (display_time+2*raster_params.smoothing_margins,length(ind));
-        
-        for f = 1:length(ind)
+        case 'cue'
+            raster (:,f) = times2Binary(data.trials(ind(f)).spike_times...
+                ,data.trials(ind(f)).cue_onset,...
+                window,...
+                data.trials(ind(f)).trial_length);
+            
+            
+        case 'targetMovementOnset'
+
+                raster (:,f) = times2Binary(data.trials(ind(f)).spike_times...
+                    ,data.trials(ind(f)).movement_onset,...
+                    window,...
+                    data.trials(ind(f)).trial_length);
+        case 'reward'
             if ~ isnan(data.trials(ind(f)).rwd_time_in_extended)
-                ts = data.trials(ind(f)).rwd_time_in_extended +(-(raster_params.time_before+raster_params.smoothing_margins):...
-                    (raster_params.time_after+raster_params.smoothing_margins));
-                ind_spk = ceil(data.trials(ind(f)).extended_spike_times);
-                ind_spk(ind_spk==0) = 1; % if spike is at time 0, move to 1.
-                raster_t = zeros (data.trials(ind(f)).rwd_time_in_extended+EXTENDED_TIME_AFTER_TRIAL,1);
-                raster_t(ind_spk) = 1;
-                raster_t = raster_t (ts);
-                raster (:,f) = raster_t;
+                
+                raster (:,f) = times2Binary(data.trials(ind(f)).extended_spike_times...
+                    ,data.trials(ind(f)).rwd_time_in_extended,...
+                    window,...
+                    data.trials(ind(f)).rwd_time_in_extended...
+                    +EXTENDED_TIME_AFTER_TRIAL);
             else
-                raster (:,f) = nan(length(-(raster_params.time_before+raster_params.smoothing_margins):...
-                    (raster_params.time_after+raster_params.smoothing_margins)),1);    
+                raster (:,f) = nan(length(window),1);
                 
             end
-        end
+            
+        case 'all'
+            
+            raster (:,f) = times2Binary(data.trials(ind(f)).spike_times...
+                ,0,...
+                1:data.trials(ind(f)).trial_length,...
+                data.trials(ind(f)).trial_length);
         
-    case 'all'
-        for f = 1:length(ind)
-            ind_spk = ceil(data.trials(ind(f)).spike_times);
-            ind_spk(ind_spk==0) = 1; % if spike is at time 0, move to 1.
-            raster_t = zeros (data.trials(ind(f)).trial_length,1);
-            raster_t(ind_spk) = 1;
-            raster (:,f) = raster_t;
-        end
         case 'allExtended'
-            for f = 1:length(ind)
-                ind_spk = ceil(data.trials(ind(f)).extended_spike_times);
-                ind_spk(ind_spk==0) = 1; % if spike is at time 0, move to 1.
-                raster_t = zeros (data.trials(ind(f)).trial_length...
-                    +EXTENDED_TIME_AFTER_TRIAL+...
-                    data.trials(ind(f)).extended_trial_begin,1);
-                raster_t(ind_spk) = 1;
-                raster (:,f) = raster_t;
-            end
-        
- end
-
+            len = data.trials(ind(f)).trial_length...
+                +EXTENDED_TIME_AFTER_TRIAL+...
+                data.trials(ind(f)).extended_trial_begin;
+            raster (:,f) = times2Binary(data.trials(ind(f)).spike_times...
+                ,0,...
+                1:len,...
+                len);
+    end
+end
 
 end
 
