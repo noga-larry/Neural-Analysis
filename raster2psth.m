@@ -16,7 +16,7 @@ if size(raster,2)==0
     psth = nan(1,params.time_before+params.time_after+1);
 else
     
-    psth = nanmean(raster',1);
+    psth = nanmean(raster,2);
     win = normpdf(-3*params.SD:3*params.SD,0,params.SD);
     win = win/sum(win);
     psth = filtfilt(win,1,psth);
