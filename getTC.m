@@ -14,6 +14,7 @@ function [TC,p,h] = getTC(data, directions, ind, comparison_window, ...
 %           .iclude_failed     1: include failed trials, 0: don't 
 %           .TC_window         Time window relative to movement onset to 
 
+
 p = inputParser;
 defaultAlignTo= 'targetMovementOnset';
 addOptional(p,'alignTo',defaultAlignTo);
