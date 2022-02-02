@@ -13,7 +13,11 @@ function[psth] = raster2psth(raster,params)
 
 if size(raster,2)==0
     disp('Empty raster!')
-    psth = nan(1,params.time_before+params.time_after+1);
+    psth = nan(size(raster,1)-2*params.smoothing_margins,1);
+
+elseif mean(isnan(raster),'all')==1
+    psth = nan(size(raster,1)-2*params.smoothing_margins,1); 
+
 else
     
     psth = nanmean(raster,2);
@@ -21,7 +25,7 @@ else
     win = win/sum(win);
     psth = filtfilt(win,1,psth);
     psth = psth*1000;
-    psth = psth((params.smoothing_margins+1):(length(psth)-params.smoothing_margins));
+    psth = psth((params.smoothing_margins+1):(size(raster,1)-params.smoothing_margins));
 end
 
 end
