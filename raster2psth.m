@@ -1,4 +1,4 @@
-function[psth] = raster2psth(raster,params) 
+function[psth,sem] = raster2psth(raster,params) 
 
 % This function takes rasters and trasforms them in to smoothed psths. 
 % Input:    raster      A matrix whos first dimnsion is time and second
@@ -10,14 +10,24 @@ function[psth] = raster2psth(raster,params)
 % Output:   psth        an array of average smoothed firing rate in time,
 %                       will be shorters then raster as edges are removed 
 %                       to avoid edge artifacts. 
+% Optional Output:
+%           sem         The sem of the smoothed single trial PSTHs. 
+
+if nargout==2
+    STpsth = raster2STpsth(raster,params);
+    psth = nanmean(STpsth);
+    sem = nanSEM(STpsth);
+    return
+end
+
 
 if size(raster,2)==0
     disp('Empty raster!')
     psth = nan(size(raster,1)-2*params.smoothing_margins,1);
-
+    
 elseif mean(isnan(raster),'all')==1
-    psth = nan(size(raster,1)-2*params.smoothing_margins,1); 
-
+    psth = nan(size(raster,1)-2*params.smoothing_margins,1);
+    
 else
     
     psth = nanmean(raster,2);
