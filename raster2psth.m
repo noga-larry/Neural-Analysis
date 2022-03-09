@@ -1,4 +1,4 @@
-function[psth,sem] = raster2psth(raster,params) 
+function[psth,err] = raster2psth(raster,params) 
 
 % This function takes rasters and trasforms them in to smoothed psths. 
 % Input:    raster      A matrix whos first dimnsion is time and second
@@ -16,7 +16,7 @@ function[psth,sem] = raster2psth(raster,params)
 if nargout==2
     STpsth = raster2STpsth(raster,params);
     psth = nanmean(STpsth);
-    sem = nanSEM(STpsth);
+    err = var(STpsth,'omitnan');
     return
 end
 
