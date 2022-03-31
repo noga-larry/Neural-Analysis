@@ -16,7 +16,7 @@ function[psth,err] = raster2psth(raster,params)
 if nargout==2
     STpsth = raster2STpsth(raster,params);
     psth = nanmean(STpsth);
-    err = var(STpsth,'omitnan');
+    err = nanSEM(STpsth);
     return
 end
 
