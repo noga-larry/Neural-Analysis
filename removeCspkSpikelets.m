@@ -1,7 +1,7 @@
 function data_ss = removeCspkSpikelets(data_ss,data_cs)
 
 REMOVAL_TIME_AFTER_CSPK = 5; %ms
-REMOVAL_TIME_BEFORE_CSPK = 0; %ms
+REMOVAL_TIME_BEFORE_CSPK = 1; %ms
 
 [data_ss,data_cs] = reduceToSharedTrials(data_ss,data_cs);
 if length(data_ss.trials)==0 || length(data_cs.trials)==0
