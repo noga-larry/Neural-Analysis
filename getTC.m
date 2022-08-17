@@ -25,11 +25,14 @@ raster_params.time_before = -min(comparison_window);
 raster_params.time_after = max(comparison_window);
 raster_params.smoothing_margins = 0;
 
+if ischar(ind) && strcmp(ind,'all')
+   ind = 1:length(data.trials);
+end
 % get direcions
 
 [~,match_d] = getDirections(data,ind);
 
-% indices of failsed trials
+% indices of failed trials
 fail_bool = [data.trials.fail];
 
 % preallocate
