@@ -4,7 +4,6 @@ function raster = getRaster(data, ind, raster_params)
 % Inputs: data                a data structer containing data on this
 %                             specific cell.
 %         raster_params
-%           .cue_time          Ms, time the target changes color
 %           .time_before       Ms, time before  the event in .allign_to
 %           .time_after        Ms, time after  the event in .allign_to
 %           .allign_to         The event in the trial to which to allign the
