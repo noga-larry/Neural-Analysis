@@ -1,4 +1,4 @@
-function [TC,p,h] = getTC(data, directions, ind, comparison_window, ...
+function [TC,pval,h] = getTC(data, directions, ind, comparison_window, ...
     varargin)
 
 % This function finds the preferred directio of a cell using center of mass
@@ -56,8 +56,8 @@ end
 
 % significance test
 
-p = kruskalwallis(spikes,group,'off');
-h = p<0.05;
+pval = kruskalwallis(spikes,group,'off');
+h = pval<0.05;
 
 
 end
