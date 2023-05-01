@@ -1,26 +1,46 @@
 function [TC,pval,h] = getTC(data, directions, ind, comparison_window, ...
     varargin)
 
-% This function finds the preferred directio of a cell using center of mass
-% and checks its significance using either ranksum test (only 2 directions)
-% or Kruskal Wallis test (more than 2).
-% Inputs: data                a data structer containing data on this 
-%                             specific cell.
-%         raster_params 
-%           .time_before       Ms, time before the event in .allign_to
-%           .time_after        Ms, time after  the event in .allign_to
-%           .smoothing_margins Size of additional margins to avoid edge 
-%                              effects in smoothing.
-%           .iclude_failed     1: include failed trials, 0: don't 
-%           .TC_window         Time window relative to movement onset to 
-
+% getTC - Calculate the tuning curve of a single neuron and test its
+%         significance using the Kruskal Wallis test.
+%
+% Syntax: [TC,pval,h] = getTC(data, directions, ind, comparison_window, varargin)
+%
+% Inputs:
+%    data - A data structure containing data on this specific cell.
+%    directions - A vector of movement directions for which to calculate the
+%                 tuning curve.
+%    ind - A vector of trial indices to include in the analysis.
+%    comparison_window - A time window relative to a trial event onset to
+%                        calculate the tuning curve.
+%    varargin - Optional input arguments. Can be used to specify:
+%               - 'alignTo': the event to which to align the data. The default is
+%                 'targetMovementOnset'.
+%               - 'test': the statistical test to use for testing the
+%                 significance of the tuning curve. The default is
+%                 'kruskalwallis'. The options are:
+%                 - 'kruskalwallis': for more than 2 directions
+%                 - 'bootstraspWelchANOVA': for 2 or more directions
+%
+% Outputs:
+%    TC - A vector containing the firing rate of the neuron for each
+%         direction in directions.
+%    pval - The p-value of the significance test.
+%    h - A logical value indicating whether the null hypothesis of the
+%        significance test was rejected.
 
 p = inputParser;
 defaultAlignTo= 'targetMovementOnset';
 addOptional(p,'alignTo',defaultAlignTo);
 
+defaultTest= 'kruskalwallis';
+addOptional(p,'test',defaultTest);
+
 parse(p,varargin{:})
 raster_params.align_to = p.Results.alignTo;
+test = p.Results.test;
+
+
 raster_params.time_before = -min(comparison_window);
 raster_params.time_after = max(comparison_window);
 raster_params.smoothing_margins = 0;
@@ -56,7 +76,13 @@ end
 
 % significance test
 
-pval = kruskalwallis(spikes,group,'off');
+switch test
+    case 'kruskalwallis'
+        pval = kruskalwallis(spikes,group,'off');
+    case 'bootstraspWelchANOVA'
+        pval = bootstraspWelchANOVA(spikes', group');
+end
+
 h = pval<0.05;
 
 
