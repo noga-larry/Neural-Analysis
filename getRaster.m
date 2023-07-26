@@ -1,23 +1,29 @@
 function raster = getRaster(data, ind, raster_params)
-% Ths function caculates the raster of a specific cell in specified trials
-% either alligned to an event or simply the entire trial.
-% Inputs: data                a data structer containing data on this
-%                             specific cell.
-%         raster_params
-%           .time_before       Ms, time before  the event in .allign_to
-%           .time_after        Ms, time after  the event in .allign_to
-%           .allign_to         The event in the trial to which to allign the
-%                              data to ('cue', 'targetMovementOnset',
-%                              'reward', 'all')
-%           .smoothing_margins size of additional margins to avoid edge
-%                              effects in smoothing, in later calculation
-%                              of PSTH.
-%         ind                  Indices of the relevent trials
-% Output: raster               raster (time x length(ind))
+% getRaster calculates the raster of a specific cell in specified trials,
+% either aligned to an event or the entire trial.
+%
+% Inputs:
+%   data - A data structure containing data on the specific cell.
+%   ind - Indices of the relevant trials.
+%   raster_params - Parameters for raster calculation.
+%     .time_before - Time before the event in 'align_to', in milliseconds.
+%     .time_after - Time after the event in 'align_to', in milliseconds.
+%     .align_to - The event in the trial to which the data should be aligned
+%                 ('cue', 'targetMovementOnset', 'reward', 'all').
+%     .smoothing_margins - Size of additional margins to avoid edge effects
+%                          in smoothing during calculation of PSTH.
+%
+% Output:
+%   raster - The raster matrix (time x length(ind)).
+%
+% Note: Aligning to 'all' will return the raster of the entire trial. If 'ind'
+% contains more than one trial and trials have different lengths, this may cause
+% a problem.
+%
+% The 'allExtended' option extends the raster to include an additional margin
+% after the trial ('EXTENDED_TIME_AFTER_TRIAL') and aligns it to the start of
+% the extended trial.
 
-% Note: Alligning to 'all' wll return the raster of the entire trial. If
-% ind contains more thrn one trial and trials have different lengths this
-% may cause a problem.
 EXTENDED_TIME_AFTER_TRIAL = 5001;
 
 if ~any(strcmp(raster_params.align_to,{'all','allExtended'}))
